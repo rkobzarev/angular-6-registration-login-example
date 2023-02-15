@@ -14,15 +14,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
-
-            // authenticate
+            // console.log('authenticate')
+            // authenticate            
             if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
                 // find if any user matches login credentials
+                
                 let filteredUsers = users.filter(user => {
                     return user.username === request.body.username && user.password === request.body.password;
                 });
-
-                if (filteredUsers.length) {
+                // console.log(filteredUsers)
+                if (filteredUsers.length) {                    
                     // if login details are valid return 200 OK with user details and fake jwt token
                     let user = filteredUsers[0];
                     let body = {
@@ -32,7 +33,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                         lastName: user.lastName,
                         token: 'fake-jwt-token'
                     };
-
+                    
                     return of(new HttpResponse({ status: 200, body: body }));
                 } else {
                     // else return 400 bad request

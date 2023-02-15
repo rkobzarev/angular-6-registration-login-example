@@ -7,15 +7,16 @@ export class AuthenticationService {
     constructor(private http: HttpClient) { }
 
     login(username: string, password: string) {
-        return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username: username, password: password })
-            .pipe(map(user => {
+        return this.http.post<any>(`http://localhost/php_root/functions/auth/create_session.php`, { user: username, pass: password })
+            .pipe(map(data => {
+                // console.log(data.user)
                 // login successful if there's a jwt token in the response
-                if (user && user.token) {
-                    // store user details and jwt token in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('currentUser', JSON.stringify(user));
+                if (data.user && data.user.session_token) {
+                    // store user details and jwt token in local storage to keep user logged in between page refreshes                    
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
                 }
 
-                return user;
+                return data;
             }));
     }
 
